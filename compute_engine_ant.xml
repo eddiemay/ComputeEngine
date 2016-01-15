@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- ================================================== -->
+<!-- ===  Digital D4 Ant Build & Deployment Script  === -->
+<!-- ===  Defaulted to java webstart deployment     === -->
+<!-- ===  Digital D4                                === -->
+<!-- ================================================== -->
+<project basedir="." default="build-jar" name="compute_engine">
+	<property name="LIB.location" value="../common/lib"/>
+	<!-- Specify the location of your workspace if it isn't
+		 located in the default location.				    -->	
+	<!-- ==================================== -->
+	<!-- set global properties for this build -->
+	<!-- ==================================== -->
+	<property name="version" value="0.5"/>
+	<property name="src" value="src"/>
+	<property name="build" value="build"/>
+	<property name="lib"  value="lib"/>
+	<property name="native"  value="lib/native"/>
+	<property name="classpath"  value="classes"/>
+	<property name="app.name" value="compute_engine"/>
+	
+	<!-- 
+	Next, add the catalina ant tasks to your build.xml. The first thing to do is to create a classpath for your project which contains all the Tomcat JAR files inside common/lib and /bin, as well as the catalina-ant.jar which contains all the ant tasks.
+	-->
+  <path id="project.classpath">
+  	<fileset dir="webapps/${app.name}/WEB-INF/lib">
+  		<include name="*.jar" />
+    </fileset>
+ 	</path>
+    <!-- ==================================== -->
+    <!-- Clean-up the build and dist dir.     -->		
+    <!-- ==================================== -->	
+	<target name="clean" description="Deletes files that should not be committed">
+        <delete dir="webapps/${app.name}/WEB-INF/classes"/>
+		<delete>
+			<fileset dir="webapps/${app.name}/WEB-INF/lib">
+				<include name="*.jar" />
+			</fileset>
+		</delete>
+  </target>
+	<!-- ==================================== -->
+	<!--        Build the source code         -->
+	<!-- ==================================== -->	
+	<target name="build" depends="clean" description="Compiles the classes">
+        <echo message="${ant.project.name}: ${ant.file}"/>
+		<mkdir dir="webapps/${app.name}/WEB-INF/classes"/>
+		<!-- Compile the source files into the buid directory -->
+		<javac destdir="webapps/${app.name}/WEB-INF/classes" 
+				includes="com/digitald4/computeengine/client/*,com/digitald4/computeengine/server/*,com/digitald4/computeengine/worker/*" 
+				target="1.8" source="1.8" optimize="yes" classpath="../iis/common/lib/joda-time-2.1.jar">
+			<src path="../iis/common/src" />
+			<src path="src" />
+      <classpath refid="project.classpath"/>
+    </javac>
+		<tstamp>
+			<format property="BUILDTIME" pattern="yyyy-MM-dd HH:mm" />
+		</tstamp>
+    </target>
+	<target name="build-jar" depends="build" description="Builds the WAR">		
+		<!-- Create the WAR -->
+		<jar jarfile="${app.name}.jar">
+			<fileset dir="webapps/${app.name}/WEB-INF/classes"/>
+			<archives>
+				<zips>
+					<fileset dir="webapps/${app.name}/WEB-INF/lib" includes="**/*.jar"/>
+	      </zips>
+	    </archives>
+			<manifest>
+	      <attribute name="Main-Class" value="com.digitald4.computeengine.worker.ComputeWorker"/>
+	    </manifest>
+		</jar>
+		<!-- Clean, so that commit is not so ugly -->
+		<!--antcall target="clean" /-->
+	</target>
+</project>
