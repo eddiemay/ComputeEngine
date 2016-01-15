@@ -41,7 +41,9 @@ public class ComputeClient {
 	
 	public static void main(String[] args) throws UnknownHostException, IOException {
 		new ComputeClient().compute(
-				new JSONArray().put("'eddie'").put("'elephant'").put("'mac'").put("'larry'").put("'computer'").put("'lemon'"),
+				new JSONArray().put("'eddie'").put("'elephant'").put("'mac'").put("'larry'")
+						.put("'computer'").put("'lemon'").put("'marv'").put("'albert'").put("'reggie'")
+						.put("'miller'").put("'lebron'").put("'james'").put("'nba'").put("'account'").put("'credit'"),
 				"execute = function(str) { return str.toUpperCase(); }");
 	}
 }

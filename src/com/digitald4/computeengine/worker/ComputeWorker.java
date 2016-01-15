@@ -40,7 +40,7 @@ public class ComputeWorker extends Thread {
 					jsonOut.put("requestId", requestId);
 					String function = json.getString("function");
 					Object value = json.get("value");
-					// System.out.println(function);
+					System.out.println(function);
 					String execute = "execute(" + value + ")";
 					System.out.println(execute);
 					engine.eval(function);
