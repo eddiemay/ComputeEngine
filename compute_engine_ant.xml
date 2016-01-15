@@ -45,9 +45,14 @@
         <echo message="${ant.project.name}: ${ant.file}"/>
 		<mkdir dir="webapps/${app.name}/WEB-INF/classes"/>
 		<!-- Compile the source files into the buid directory -->
+		<copy todir="webapps/${app.name}/WEB-INF/lib">
+			<fileset dir="../iis/common/lib">
+				<include name="joda-time-2.1.jar" />
+			</fileset>
+		</copy>
 		<javac destdir="webapps/${app.name}/WEB-INF/classes" 
 				includes="com/digitald4/computeengine/client/*,com/digitald4/computeengine/server/*,com/digitald4/computeengine/worker/*" 
-				target="1.8" source="1.8" optimize="yes" classpath="../iis/common/lib/joda-time-2.1.jar">
+				target="1.8" source="1.8" optimize="yes">
 			<src path="../iis/common/src" />
 			<src path="src" />
       <classpath refid="project.classpath"/>
