@@ -14,6 +14,8 @@ import javax.script.ScriptException;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import com.digitald4.common.util.FormatText;
+
 public class ComputeWorker extends Thread {
 	private final ScriptEngineManager engineManager = new ScriptEngineManager();
 	private final ScriptEngine engine = engineManager.getEngineByName("nashorn");
@@ -33,6 +35,7 @@ public class ComputeWorker extends Thread {
 		try {
 			String line;
 			while ((line = reader.readLine()) != null && !line.equals("shutdown")) {
+				long sTime = System.currentTimeMillis();
 				JSONObject jsonOut = new JSONObject();
 				try {
 					JSONObject json = new JSONObject(line);
@@ -40,7 +43,7 @@ public class ComputeWorker extends Thread {
 					jsonOut.put("requestId", requestId);
 					String function = json.getString("function");
 					Object value = json.get("value");
-					System.out.println(function);
+					// System.out.println(function);
 					String execute = "execute(" + value + ")";
 					System.out.println(execute);
 					engine.eval(function);
@@ -50,7 +53,7 @@ public class ComputeWorker extends Thread {
 					jsonOut.put("error",
 							new JSONObject().put("message", e.getMessage()).put("stackTrace", e.getStackTrace()));
 				} finally {
-					System.out.println("return: " + jsonOut);
+					System.out.println(FormatText.formatElapshed(System.currentTimeMillis() - sTime) + " return: " + jsonOut);
 					writer.println(jsonOut);
 				}
 			}
